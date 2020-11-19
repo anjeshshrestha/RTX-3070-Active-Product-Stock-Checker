@@ -117,14 +117,14 @@ def bestBuy():
         for key, value in bestbuy_webcode.items():
             x = requests.get("https://www.bestbuy.ca/ecomm-api/availability/products?skus=" + key, headers=headers)
             stockstatus = json.loads(x.content.decode('utf-8-sig').encode('utf-8'))
-            if stockstatus['availabilities'][0]['shipping']['purchasable'] == 'false':
-                #print(value, '| Out of Stock')
-                bbstock_dict[value] = 'Out of Stock'
-            else:
+            if stockstatus['availabilities'][0]['shipping']['purchasable'] == 'true':
                 #print(value, '| In Stock')
                 bbstock_dict[value] = 'In Stock'
                 bb_webhook.set_content("IN STOCK:\n" + value + "\nhttps://www.bestbuy.ca/en-ca/product/" + key)
                 bb_webhook.execute()
+            else:
+                #print(value, '| Out of Stock')
+                bbstock_dict[value] = 'Out of Stock'
             time.sleep(1)
         bbstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
     except Exception as e:
