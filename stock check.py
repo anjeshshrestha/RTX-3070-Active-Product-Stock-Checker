@@ -117,7 +117,7 @@ def bestBuy():
         for key, value in bestbuy_webcode.items():
             x = requests.get("https://www.bestbuy.ca/ecomm-api/availability/products?skus=" + key, headers=headers)
             stockstatus = json.loads(x.content.decode('utf-8-sig').encode('utf-8'))
-            if stockstatus['availabilities'][0]['shipping']['status'] == 'SoldOutOnline':
+            if stockstatus['availabilities'][0]['shipping']['purchasable'] == 'false':
                 #print(value, '| Out of Stock')
                 bbstock_dict[value] = 'Out of Stock'
             else:
