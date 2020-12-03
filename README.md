@@ -1,5 +1,7 @@
 # RTX-3070-Active-Product-Stock-Checker
 
+Install the requirements with pip: "pip install -r requirements.txt"
+
 Create a discord webhook for the channel: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks
 
 Change the first line in the text file to the discord webhook
