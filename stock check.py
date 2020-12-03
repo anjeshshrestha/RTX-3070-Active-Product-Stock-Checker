@@ -7,13 +7,18 @@ import time
 from discord_webhook import DiscordWebhook
 
 print("Made by anjeshshrestha")
+#open the files
+bbfile = open("stores/bestbuy.txt","r").readlines() 
+ccfile = open("stores/canadacomputers.txt","r").readlines() 
+mefile = open("stores/memoryexpress.txt","r").readlines() 
+nefile = open("stores/newegg.txt","r").readlines()
 
-bb_webhook = DiscordWebhook(url='https://discord.com/api/webhooks/772537576737341481/pYTDes4zq_m8h4CtRSLi1QbP6pO9w06ZldzTrwjN-w6-r1GzkxrUhHLZc6T4a3YdeL1Z')
-cc_webhook = DiscordWebhook(url='https://discord.com/api/webhooks/772537619774439426/ZEJ6r201FMxZi8C7deZCLaFdy08tCR0Gua8lc8ZJH1zi7mkepJDz8wYTmTko1XBosE-F')
-me_webhook = DiscordWebhook(url='https://discord.com/api/webhooks/772538223154561094/QeSO5d8XbO1n4hmgczvOSTyUOA9bp7Fa76wEc2vij5susufkBje-5SCj9LLAMXpUtsri')
-ne_webhook = DiscordWebhook(url='https://discord.com/api/webhooks/772538285640646656/1pqbR0GbCv9DzcSx_V4mA0wvEU_sYgj98eHvaJmlL_ukLBvM8uLQVX1_5ODfuTMa7TTs')
+#first line of file is webhook address
+bb_webhook = DiscordWebhook(url=bbfile.pop())
+cc_webhook = DiscordWebhook(url=ccfile.pop())
+me_webhook = DiscordWebhook(url=mefile.pop())
+ne_webhook = DiscordWebhook(url=nefile.pop())
 
-#'name' : 'out of stock'
 bbstock_dict = dict()
 mestock_dict = dict()
 nestock_dict = dict()
@@ -25,82 +30,27 @@ nestock_dict['Last Update'] = 'Updating'
 ccstock_dict['Last Update'] = 'Updating'
 azstock_dict['Last Update'] = 'Updating'
 
-bestbuy_webcode = {'15081879' : 'EVGA GeForce RTX 3070 XC3 Black 8GB',
-                   '15078017' : 'NVIDIA GeForce RTX 3070 8GB',
-                   '15038016' : 'MSI NVIDIA GeForce RTX 3070 VENTUS 3X OC 8GB',
-                   '15000079' : 'ZOTAC NVIDIA GeForce RTX 3070 Twin Edge 8GB',
-                   '15000078' : 'ZOTAC NVIDIA GeForce RTX 3070 Twin Edge OC 8GB',
-                   }
+#read the files and items codes in the file
+bestbuy_webcode = {}
+for item in bbfile[1:]:
+    code, name = item.split(',')
+    bestbuy_webcode[code] = name
 
-memoryexpress_webcode = {'MX00114561' : 'ASUS DUAL RTX3070 GeForce RTX 3070 8GB',
-                         'MX00114566' : 'ASUS DUAL RTX3070 OC GeForce RTX 3070 8GB',
-                         'MX00114560' : 'ASUS ROG STRIX RTX3070 OC GAMING GeForce RTX 3070 8GB',
-                         'MX00114567' : 'ASUS TUF RTX3070 OC GAMING GeForce RTX 3070 8GB',
-                         'MX00114605' : 'EVGA GeForce RTX 3070 XC3 BLACK GAMING 8GB',
-                         'MX00114606' : 'EVGA GeForce RTX 3070 XC3 ULTRA GAMING 8GB',
-                         'MX00114607' : 'EVGA GeForce RTX 3070 FTW3 ULTRA GAMING 8GB',
-                         'MX00114408' : 'GIGABYTE GeForce RTX 3070 EAGLE 8GB',
-                         'MX00114407' : 'GIGABYTE GeForce RTX 3070 EAGLE OC 8GB',
-                         'MX00114405' : 'GIGABYTE GeForce RTX 3070 GAMING OC 8GB',
-                         'MX00114447' : 'MSI GeForce RTX 3070 GAMING X TRIO 8GB',
-                         'MX00114448' : 'MSI GeForce RTX 3070 VENTUS 2X OC 8GB',
-                         'MX00114449' : 'MSI GeForce RTX 3070 VENTUS 3X OC 8GB',
-                         }
+canadacomputer_webcode = {}
+for item in ccfile[1:]:
+    code, name = item.split(',')
+    canadacomputer_webcode[code] = name
 
-newegg_webcode = {'N82E16814126459' : 'ASUS Dual GeForce RTX 3070 DUAL-RTX3070-O8G 8GB',
-                  'N82E16814126460' : 'ASUS Dual GeForce RTX 3070 DUAL-RTX3070-8G 8GB',
-                  'N82E16814126461' : 'ASUS TUF Gaming GeForce RTX 3070 TUF-RTX3070-O8G-GAMING 8GB',
-                  'N82E16814126458' : 'ASUS ROG Strix GeForce RTX 3070 ROG-STRIX-RTX3070-O8G-GAMING 8GB',
-                  'N82E16814487528' : 'EVGA GeForce RTX 3070 XC3 BLACK GAMING, 8GB',
-                  'N82E16814487529' : 'EVGA GeForce RTX 3070 XC3 GAMING, 8GB',
-                  'N82E16814487530' : 'EVGA GeForce RTX 3070 XC3 ULTRA GAMING, 8GB',
-                  'N82E16814487531' : 'EVGA GeForce RTX 3070 FTW3 GAMING, 8GB',
-                  'N82E16814487532' : 'EVGA GeForce RTX 3070 FTW3 ULTRA GAMING, 8GB',
-                  'N82E16814932359' : 'GIGABYTE AORUS GeForce RTX 3070 GV-N3070AORUS M-8GD 8GB',
-                  'N82E16814932360' : 'GIGABYTE GeForce RTX 3070 GV-N3070VISION OC-8GD 8GB',
-                  'N82E16814932344' : 'GIGABYTE GeForce RTX 3070 GV-N3070EAGLE-8GD 8GB',
-                  'N82E16814932342' : 'GIGABYTE GeForce RTX 3070 GV-N3070GAMING OC-8GD 8GB',
-                  'N82E16814932343' : 'GIGABYTE GeForce RTX 3070 GV-N3070EAGLE OC-8GD 8GB',
-                  'N82E16814137601' : 'MSI GeForce RTX 3070 VENTUS 3X OC 8GB',
-                  'N82E16814137602' : 'MSI GeForce RTX 3070 VENTUS 2X OC 8GB',
-                  'N82E16814137605' : 'MSI GeForce RTX 3070 VENTUS 2X 8GB',
-                  'N82E16814137603' : 'MSI GeForce RTX 3070 GAMING X TRIO 8GB',
-                  'N82E16814500501' : 'ZOTAC GAMING GeForce RTX 3070 Twin Edge 8GB',
-                  'N82E16814500505' : 'ZOTAC GAMING GeForce RTX 3070 Twin Edge OC 8GB',
-                  }
+memoryexpress_webcode = {}
+for item in mefile[1:]:
+    code, name = item.split(',')
+    memoryexpress_webcode[code] = name
 
-canadacomputer_webcode = {
-                          '183635' : 'ASUS DUAL GeForce RTX 3070 8GB DUAL-RTX3070-8G',
-                          '183636' : 'ASUS DUAL GeForce RTX 3070 OC 8GB DUAL-RTX3070-O8G',
-                          '183637' : 'ASUS ROG Strix GeForce RTX 3070 OC 8GB ROG-STRIX-RTX3070-O8G-GAMING',
-                          '183638' : 'ASUS TUF Gaming GeForce RTX 3070 OC 8GB TUF-RTX3070-O8G-GAMING',
-                          '183099' : 'GIGABYTE GeForce RTX 3070 GAMING OC 8G GV-N3070GAMING OC-8GD',
-                          '183100' : 'GIGABYTE GeForce RTX 3070 EAGLE OC 8G GV-N3070EAGLE OC-8GD',
-                          '183101' : 'GIGABYTE GeForce RTX 3070 EAGLE 8G GV-N3070EAGLE-8GD',
-                          '184167' : 'GIGABYTE AORUS GeForce RTX 3070 MASTER 8G, GV-N3070AORUS M-8GD',
-                          '184168' : 'GIGABYTE GeForce RTX 3070 VISION OC 8G GV-N3070VISION OC-8GD',
-                          '183208' : 'MSI GeForce RTX 3070 VENTUS 2X OC 8GB',
-                          '183209' : 'MSI GeForce RTX 3070 VENTUS 3X OC 8GB',
-                          '183210' : 'MSI GeForce RTX 3070 GAMING X TRIO, 8GB',
-                          '183498' : 'EVGA GeForce RTX 3070 FTW3 ULTRA GAMING 8GB DP x3 08G-P5-3797-KR',
-                          '183499' : 'EVGA GeForce RTX 3070 XC3 ULTRA GAMING 8GB 08G-P5-3755-KR',
-                          '183500' : 'EVGA GeForce RTX 3070 XC3 BLACK GAMING 8GB 08G-P5-3751-KR',
-                          '183560' : 'ZOTAC GeForce RTX 3070 Twin Edge 8GB ZT-A30700E-10P',
-                          '183561' : 'ZOTAC GeForce RTX 3070 Twin Edge OC 8GB ZT-A30700H-10P',
-                          }
-amazon_webcode = {'B08L8HPKR6' : 'ASUS DUAL-RTX3070-8G',
-                  'B08L8LG4M3' : 'ASUS DUAL-RTX3070-O8G',
-                  'B08L8JNTXQ' : 'ASUS ROG-STRIX-RTX3070-O8G-GAMING',
-                  'B08L8KC1J7' : 'ASUS TUF-RTX3070-O8G-GAMING',
-                  'B08LW46GH2' : 'EVGA GeForce RTX 3070 XC3 Black Gaming, 8GB',
-                  'B08KY322TH' : 'GIGABYTE GeForce RTX 3070 Eagle OC 8G',
-                  'B08KXZV626' : 'GIGABYTE GeForce RTX 3070 Eagle 8G',
-                  'B08KY266MG' : 'GIGABYTE GeForce RTX 3070 Gaming OC 8G',
-                  'B08KWN2LZG' : 'MSI Gaming GeForce RTX 3070 8GB',
-                  'B08KWPDXJZ' : 'MSI Gaming GeForce RTX 3070 8GB',
-                  'B08LF32LJ6' : 'ZOTAC Gaming GeForce RTX™ 3070 Twin Edge 8GB',
-                  'B08LF1CWT2' : 'ZOTAC Gaming GeForce RTX 3070 Twin Edge OC 8GB',
-                  }
+newegg_webcode = {}
+for item in nefile[1:]:
+    code, name = item.split(',')
+    newegg_webcode[code] = name
+
 headers = {
     'pragma': 'no-cache',
     'cache-control': 'no-cache',
@@ -335,15 +285,5 @@ update_bb()
 update_me()
 update_ne()
 update_cc()
-
-#amazon = tk.Label(root, text = "Amazon", font=('times',24,'bold'))
-#amazon.grid(row=5,column=2)
-#azstock = tk.Text(root, width="110", height="19")
-#azstock.tag_config("red", foreground="red")
-#azstock.tag_config("green", foreground="green")
-#azstock.grid(row=6,column=1)
-#azstock.config(state='disabled')
-
-#update_az()
 
 root.mainloop()
