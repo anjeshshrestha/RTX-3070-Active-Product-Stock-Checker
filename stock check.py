@@ -59,7 +59,7 @@ newegg_webcode = {}
 for item in nefile:
     try:
         code, name = item.split(',')
-        newegg_webcode[code] = name
+        newegg_webcode[code.strip()] = name.strip()
     except:
         pass
 
@@ -75,8 +75,8 @@ headers = {
 }
 
 def bestBuy():
-    try:
-        for key, value in bestbuy_webcode.items():
+    for key, value in bestbuy_webcode.items():
+        try:
             x = requests.get("https://www.bestbuy.ca/ecomm-api/availability/products?skus=" + key, headers=headers)
             stockstatus = json.loads(x.content.decode('utf-8-sig').encode('utf-8'))
             if stockstatus['availabilities'][0]['shipping']['purchasable'] == 'true':
@@ -88,19 +88,20 @@ def bestBuy():
                 #print(value, '| Out of Stock')
                 bbstock_dict[value] = 'Out of Stock'
             time.sleep(1)
-        bbstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
-    except Exception as e:
-        print('bb',e)
+        except Exception as e:
+            print('bb',key,e)
+    bbstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
+    
         
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def memoryExpress():
-    try:        
-        for key, value in memoryexpress_webcode.items():
+    for key, value in memoryexpress_webcode.items():
+        try:   
             x = requests.get("https://www.memoryexpress.com/Products/" + key)
             stockstatus = x.text
             y = re.search("c\-capr\-inventory\-store__availability\ InventoryState_(\w+)", stockstatus)
-            if y.group(1) == 'BackOrder':
+            if y.group(1) == 'BackOrder' or y.group(1) == 'Out of Stock':
                 #print(value, '| Out of Stock')
                 mestock_dict[value] = 'Out of Stock'
             elif y.group(1) == 'InStock':
@@ -109,15 +110,17 @@ def memoryExpress():
                 me_webhook.set_content("IN STOCK:\n" + value + "\nhttps://www.memoryexpress.com/Products/" + key)
                 me_webhook.execute()
             time.sleep(1)
-        mestock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
-    except Exception as e:
-        print('me',e)
+        except Exception as e:
+            print('me',key,e)
+            continue
+    mestock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
+    
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def newEgg():
-    try:
-        for key, value in newegg_webcode.items():
+    for key, value in newegg_webcode.items():
+        try:
             sub_key = key[7:]
             product_code = sub_key[0:2] + '-' + sub_key[2:5] + '-' + sub_key[5:]
             x = requests.get("https://www.newegg.ca/product/api/ProductRealtime?ItemNumber=" + product_code, headers=headers)
@@ -131,15 +134,16 @@ def newEgg():
                 ne_webhook.set_content("IN STOCK:\n" + value + "\nhttps://www.newegg.ca/p/" + key)
                 ne_webhook.execute()
             time.sleep(1)
-        nestock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
-    except Exception as e:
-        print('me',e)
+        except Exception as e:
+            print('ne',key,e)
+    nestock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
+    
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def canadaComputers():
-    try:
-        for key, value in canadacomputer_webcode.items():
+    for key, value in canadacomputer_webcode.items():
+        try:
             x = requests.get("https://www.canadacomputers.com/product_info.php?ajaxstock=true&itemid=" + key, headers=headers)
             stockstatus = x.json()
             if stockstatus['avail'] == 0:
@@ -151,15 +155,16 @@ def canadaComputers():
                 cc_webhook.set_content("IN STOCK:\n" + value + "\nhttps://www.canadacomputers.com/product_info.php?cPath=1&item_id=" + key)
                 cc_webhook.execute()
             time.sleep(1)
-        ccstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
-    except Exception as e:
-        print('cc',e)
+        except Exception as e:
+            print('cc',key,e)
+    ccstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
+    
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def Amazon():
-    try:
-        for key, value in amazon_webcode.items():
+    for key, value in amazon_webcode.items():
+        try:
             x = requests.get('https://ca.camelcamelcamel.com/product/' + key, headers=headers)
             stockstatus = x.text
             if 'class="green">$0.00' in stockstatus:
@@ -169,9 +174,10 @@ def Amazon():
                 #print(value, '| In Stock')
                 azstock_dict[value] = 'In Stock'
             time.sleep(1)
-        azstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
-    except Exception as e:
-        print('az',e)
+        except Exception as e:
+            print('az',key,e)
+    azstock_dict['Last Update'] = time.strftime('%H:%M:%S %p')
+    
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
