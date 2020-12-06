@@ -14,10 +14,10 @@ mefile = open("stores/memoryexpress.txt","r").readlines()
 nefile = open("stores/newegg.txt","r").readlines()
 
 #first line of file is webhook address
-bb_webhook = DiscordWebhook(url=bbfile.pop())
-cc_webhook = DiscordWebhook(url=ccfile.pop())
-me_webhook = DiscordWebhook(url=mefile.pop())
-ne_webhook = DiscordWebhook(url=nefile.pop())
+bb_webhook = DiscordWebhook(url=bbfile[0].strip())
+cc_webhook = DiscordWebhook(url=ccfile[0].strip())
+me_webhook = DiscordWebhook(url=mefile[0].strip())
+ne_webhook = DiscordWebhook(url=nefile[0].strip())
 
 bbstock_dict = dict()
 mestock_dict = dict()
@@ -32,24 +32,36 @@ azstock_dict['Last Update'] = 'Updating'
 
 #read the files and items codes in the file
 bestbuy_webcode = {}
-for item in bbfile[1:]:
-    code, name = item.split(',')
-    bestbuy_webcode[code] = name
+for item in bbfile:
+    try:
+        code, name = item.split(',')
+        bestbuy_webcode[code.strip()] = name.strip()
+    except:
+        pass
 
 canadacomputer_webcode = {}
-for item in ccfile[1:]:
-    code, name = item.split(',')
-    canadacomputer_webcode[code] = name
+for item in ccfile:
+    try:
+        code, name = item.split(',')
+        canadacomputer_webcode[code.strip()] = name.strip()
+    except:
+        pass
 
 memoryexpress_webcode = {}
-for item in mefile[1:]:
-    code, name = item.split(',')
-    memoryexpress_webcode[code] = name
+for item in mefile:
+    try:
+        code, name = item.split(',')
+        memoryexpress_webcode[code.strip()] = name.strip()
+    except:
+        pass
 
 newegg_webcode = {}
-for item in nefile[1:]:
-    code, name = item.split(',')
-    newegg_webcode[code] = name
+for item in nefile:
+    try:
+        code, name = item.split(',')
+        newegg_webcode[code] = name
+    except:
+        pass
 
 headers = {
     'pragma': 'no-cache',
